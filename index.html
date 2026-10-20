@@ -3,50 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عازل الصوت بالذكاء الاصطناعي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: #f8fafc; color: #1e293b; padding: 20px; text-align: center; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; max-width: 600px; margin: 0 auto; }
-        .logo { font-weight: bold; font-size: 1.2rem; color: #4f46e5; }
-        .card { background: white; border-radius: 20px; padding: 30px 20px; max-width: 600px; margin: 20px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        h1 { font-size: 1.8rem; margin-bottom: 15px; color: #0f172a; }
-        p { color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px; }
-        .upload-area { border: 2px dashed #cbd5e1; border-radius: 15px; padding: 30px; background: #fafafa; cursor: pointer; }
-        input[type="file"] { display: none; }
-        .btn { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 10px; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 15px; width: 100%; }
-        .btn:hover { background: #4338ca; }
-        #audioResults { margin-top: 25px; display: none; }
-        audio { width: 100%; margin-top: 10px; }
-    </style>
+    <title>قنوات عربية - البث المباشر</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-tv"></i>
+                <span>قنوات عربية</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">الرئيسية</a></li>
+                    <li><a href="#channels">القنوات</a></li>
+                    <li><a href="#schedule">جدول البرامج</a></li>
+                    <li><a href="#favorites">المفضلة</a></li>
+                    <li><a href="#contact">اتصل بنا</a></li>
+                </ul>
+            </nav>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="ابحث عن قناة..." id="searchInput">
+            </div>
+        </div>
+    </header>
 
-    <div class="header">
-        <div class="logo">🎙️ VocalRemover</div>
-    </div>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>مرحباً بك في قنوات عربية</h1>
+        <p>شاهد قنواتك المفضلة مباشرة بجودة عالية</p>
+    </section>
 
-    <div class="card">
-        <h1>عزل الغناء عن الموسيقى</h1>
-        <p>قم برفع الملف الصوتي ليتم فصل الصوت البشري عن الموسيقى مجاناً.</p>
+    <!-- Categories & Channels -->
+    <section class="categories" id="channels">
+        <h2 class="section-title">
+            <i class="fas fa-satellite-dish"></i>
+            القنوات المتاحة
+        </h2>
 
-        <form id="uploadForm">
-            <label for="audioFile" class="upload-area">
-                <span>📁 اضغط هنا لاختيار ملف صوتي</span>
-                <input type="file" id="audioFile" accept="audio/*" required>
-            </label>
-            <button type="submit" class="btn">شروع في عزل الصوت</button>
-        </form>
+        <div class="category-tabs">
+            <div class="tab active" data-category="all">الكل</div>
+            <div class="tab" data-category="news">أخبار</div>
+            <div class="tab" data-category="sports">رياضة</div>
+            <div class="tab" data-category="entertainment">ترفيه</div>
+            <div class="tab" data-category="kids">أطفال</div>
+            <div class="tab" data-category="religious">دينية</div>
+            <div class="tab" data-category="movies">أفلام</div>
+        </div>
 
-        <div id="audioResults">
-            <h3>النتائج:</h3>
-            <p>الصوت البشري فقط:</p>
-            <audio id="vocalsAudio" controls></audio>
-            <p style="margin-top:15px;">الموسيقى فقط:</p>
-            <audio id="noVocalsAudio" controls></audio>
+        <div class="channels-grid" id="channelsGrid">
+            <!-- Channels will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Modal Player -->
+    <div class="modal" id="playerModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="video-container">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            <div class="player-info">
+                <h2 id="playerChannelName">اسم القناة</h2>
+                <p id="playerChannelDesc">وصف القناة</p>
+            </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <h3>تواصل معنا</h3>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-telegram"></i></a>
+            </div>
+            <p>© 2026 قنوات عربية - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
