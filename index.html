@@ -1,117 +1,124 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ترجمة | Translate Pro</title>
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaPro — ترجمة احترافية بالذكاء الاصطناعي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="bg-glow"></div>
 
+  <!-- ===== Header ===== -->
   <header class="header">
-    <div class="header-top">
-      <h1 class="logo">🌐 ترجمة</h1>
-      <button id="voiceTranslateBtn" class="voice-translate-btn">🎙️ ترجمة صوتية</button>
+    <div class="logo">
+      <div class="logo-icon">🌐</div>
+      <span class="logo-text">Lingua<span class="accent">Pro</span></span>
     </div>
-    <p class="tagline">ترجم نصوصك وصوتك بين أكثر من 100 لغة</p>
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher" id="langSwitcher">
+      <button class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span id="currentLangLabel">العربية</span>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+
+      <div class="lang-dropdown" id="langDropdown">
+        <input type="text" class="lang-search" id="langSearch" placeholder="ابحث عن لغة..." />
+        <ul class="lang-list" id="langList" role="listbox"></ul>
+      </div>
+    </div>
   </header>
 
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <h1 class="hero-title" data-i18n="heroTitle">ترجم أي شيء بدقة احترافية</h1>
+    <p class="hero-sub" data-i18n="heroSub">ترجمة فورية بالذكاء الاصطناعي تدعم أكثر من 140 لغة — نصوص، ملفات، صور وصوت.</p>
+  </section>
+
+  <!-- ===== Main Translator ===== -->
   <main class="container">
-    <section class="card">
 
-      <!-- ===== شريط المحرك والمفاتيح ===== -->
-      <div class="engine-bar">
-        <div class="engine-group">
-          <label>محرّك الترجمة</label>
-          <select id="engineSelect" class="lang-select">
-            <option value="mymemory">MyMemory (مجاني)</option>
-            <option value="deepl">DeepL (يحتاج مفتاح)</option>
-            <option value="google">Google Translate (يحتاج مفتاح)</option>
-          </select>
-        </div>
-        <button id="keysBtn" class="keys-btn">🔑 إدارة المفاتيح</button>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="text" data-i18n="tabText">نص</button>
+      <button class="tab" data-tab="files" data-i18n="tabFiles">ملفات</button>
+    </div>
+
+    <!-- Text panel -->
+    <div class="panel" id="panel-text">
+      <textarea id="sourceText" class="source-text" placeholder="اكتب النص هنا..." data-i18n-placeholder="placeholderText"></textarea>
+      <div class="actions">
+        <button class="btn-primary" id="translateTextBtn" data-i18n="translateNow">ترجم الآن</button>
       </div>
+    </div>
 
-      <!-- ===== نافذة إدارة المفاتيح ===== -->
-      <div id="keysPanel" class="keys-panel" hidden>
-        <h3>🔑 مفاتيح API</h3>
-        <p class="hint">أضف مفتاحاً واحداً في كل سطر. للنصوص الطويلة أضف عدة مفاتيح MyMemory لتوزيع الحمل.</p>
-
-        <label class="key-label">مفاتيح MyMemory (email أو مفتاح)</label>
-        <textarea id="mymemoryKeys" class="key-area" placeholder="example1@mail.com&#10;example2@mail.com"></textarea>
-
-        <label class="key-label">مفتاح DeepL</label>
-        <input id="deeplKey" class="key-input" type="text" placeholder="xxxxxxxx-xxxx-xxxx:fx">
-
-        <label class="key-label">مفتاح Google Translate API</label>
-        <input id="googleKey" class="key-input" type="text" placeholder="AIza...">
-
-        <div class="keys-actions">
-          <button id="saveKeys" class="main-btn small">💾 حفظ</button>
-          <button id="closeKeys" class="stop-btn small">إغلاق</button>
-        </div>
+    <!-- Files panel -->
+    <div class="panel hidden" id="panel-files">
+      <div class="dropzone" id="dropzone">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        </svg>
+        <p class="dz-title" data-i18n="dropTitle">اسحب وأفلت ملفك هنا</p>
+        <p class="dz-hint" data-i18n="dropHint">يدعم: PDF, DOCX, TXT — صور PNG/JPG — صوت MP3/WAV/M4A</p>
+        <label class="btn-secondary">
+          <span data-i18n="browse">اختر ملفاً</span>
+          <input type="file" id="fileInput" hidden accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.mp3,.wav,.m4a" />
+        </label>
       </div>
-
-      <!-- ===== اللغات ===== -->
-      <div class="lang-bar">
-        <div class="lang-group">
-          <label>من</label>
-          <select id="fromLang" class="lang-select"></select>
-        </div>
-        <button id="swapBtn" class="swap-btn" title="تبديل">⇄</button>
-        <div class="lang-group">
-          <label>إلى</label>
-          <select id="toLang" class="lang-select"></select>
-        </div>
-      </div>
-
-      <div class="panes">
-        <div class="pane">
-          <textarea id="inputText" placeholder="اكتب النص هنا أو استورد ملفاً..."></textarea>
-          <div class="pane-actions">
-            <input type="file" id="fileInput" accept=".txt,.docx,.pdf,.srt,.md" hidden>
-            <button id="importBtn" class="import-btn">📁 استيراد ملف</button>
-            <button id="micBtn" class="icon-btn" title="إدخال صوتي">🎤</button>
-            <button id="speakInput" class="icon-btn" title="نطق النص">🔊</button>
-            <button id="clearBtn" class="icon-btn" title="مسح">🗑️</button>
+      <div class="file-preview hidden" id="filePreview">
+        <div class="file-info">
+          <span class="file-icon" id="fileIcon">📄</span>
+          <div>
+            <div class="file-name" id="fileName">file.pdf</div>
+            <div class="file-size" id="fileSize">0 KB</div>
           </div>
         </div>
+        <button class="btn-remove" id="removeFile">✕</button>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="translateFileBtn" data-i18n="translateNow" disabled>ترجم الآن</button>
+      </div>
+    </div>
 
-        <div class="pane">
-          <textarea id="outputText" placeholder="الترجمة..." readonly></textarea>
-          <div class="pane-actions">
-            <button id="speakOutput" class="icon-btn" title="نطق الترجمة">🔊</button>
-            <button id="copyBtn" class="icon-btn" title="نسخ">📋</button>
-            <button id="downloadBtn" class="icon-btn" title="تحميل الترجمة">💾</button>
-          </div>
+    <!-- Progress -->
+    <div class="progress-wrap hidden" id="progressWrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <p class="progress-text" id="progressText" data-i18n="translating">جارٍ الترجمة...</p>
+    </div>
+
+    <!-- Result -->
+    <div class="result hidden" id="result">
+      <div class="result-header">
+        <h3 data-i18n="resultTitle">النتيجة</h3>
+        <div class="result-actions">
+          <button class="btn-ghost" id="copyBtn" data-i18n="copy">نسخ</button>
+          <button class="btn-ghost" id="downloadBtn" data-i18n="download">تنزيل</button>
         </div>
       </div>
+      <div class="result-text" id="resultText"></div>
+    </div>
 
-      <!-- ===== شريط التقدم ===== -->
-      <div id="progressWrap" class="progress-wrap" hidden>
-        <div class="progress-info">
-          <span id="progressLabel">جارٍ الترجمة...</span>
-          <span id="progressPct">0%</span>
-        </div>
-        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
-        <div id="keyStatus" class="key-status"></div>
-      </div>
-
-      <!-- ===== أزرار ===== -->
-      <div class="action-row">
-        <button id="translateBtn" class="main-btn">ترجم الآن</button>
-        <button id="translateFileBtn" class="main-btn file-btn">📄 ترجمة ملف كامل</button>
-        <button id="stopBtn" class="stop-btn" hidden>⏹️ إيقاف</button>
-      </div>
-
-    </section>
   </main>
 
-  <footer class="footer">صُنع بـ ❤️ — ترجمة فورية نصاً وصوتاً</footer>
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="#" data-i18n="privacy">الخصوصية</a>
+      <a href="#" data-i18n="terms">الشروط</a>
+      <a href="#" data-i18n="contact">اتصل بنا</a>
+    </div>
+    <p class="copy" data-i18n="footerCopy">© 2026 LinguaPro — جميع الحقوق محفوظة</p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
 
   <script src="script.js"></script>
 </body>
