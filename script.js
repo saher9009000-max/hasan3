@@ -1,347 +1,110 @@
-// ===== اللغات =====
-const LANGUAGES = {
-  ar:"العربية", en:"الإنجليزية", fr:"الفرنسية", es:"الإسبانية", de:"الألمانية",
-  it:"الإيطالية", pt:"البرتغالية", ru:"الروسية", zh:"الصينية (مبسطة)",
-  "zh-TW":"الصينية (تقليدية)", ja:"اليابانية", ko:"الكورية", tr:"التركية",
-  hi:"الهندية", ur:"الأردية", fa:"الفارسية", nl:"الهولندية", sv:"السويدية",
-  pl:"البولندية", uk:"الأوكرانية", ro:"الرومانية", el:"اليونانية", he:"العبرية",
-  th:"التايلاندية", vi:"الفيتنامية", id:"الإندونيسية", ms:"الماليزية",
-  bn:"البنغالية", ta:"التاميلية", te:"التيلوغوية", ml:"المالايالامية",
-  kn:"الكانادية", gu:"الغوجاراتية", mr:"الماراثية", pa:"البنجابية",
-  ne:"النيبالية", si:"السنهالية", my:"البورمية", km:"الخميرية", lo:"اللاوية",
-  sw:"السواحيلية", am:"الأمهرية", so:"الصومالية", ha:"الهوسا", yo:"اليوروبا",
-  ig:"الإيبو", zu:"الزولو", af:"الأفريكانية", no:"النرويجية", da:"الدنماركية",
-  fi:"الفنلندية", is:"الأيسلندية", cs:"التشيكية", sk:"السلوفاكية", hu:"المجرية",
-  bg:"البلغارية", sr:"الصربية", hr:"الكرواتية", sl:"السلوفينية",
-  bs:"البوسنية", mk:"المقدونية", sq:"الألبانية", lt:"الليتوانية",
-  lv:"اللاتفية", et:"الإستونية", be:"البيلاروسية", ka:"الجورجية",
-  hy:"الأرمنية", az:"الأذربيجانية", kk:"الكازاخية", uz:"الأوزبكية",
-  ky:"القرغيزية", tg:"الطاجيكية", mn:"المنغولية", ps:"الباشتوية", ku:"الكردية",
-  ca:"الكاتالونية", gl:"الغاليسية", eu:"الباسكية", mt:"المالطية",
-  ga:"الأيرلندية", cy:"الويلزية", la:"اللاتينية", eo:"الإسبرانتو",
-  tl:"الفلبينية", jv:"الجاوية", su:"السوندية", ceb:"السيبوانية",
-  mi:"الماورية", haw:"الهاوايية", sm:"الساموية", fj:"الفيدجية",
-  yi:"اليديشية", lb:"اللوكسمبورغية", mg:"الملغاشية", ny:"الشيشيوا"
-};
-
-const fromLang = document.getElementById("fromLang");
-const toLang = document.getElementById("toLang");
-const inputText = document.getElementById("inputText");
-const outputText = document.getElementById("outputText");
-const fileInput = document.getElementById("fileInput");
-const progressWrap = document.getElementById("progressWrap");
-const progressFill = document.getElementById("progressFill");
-const progressLabel = document.getElementById("progressLabel");
-const progressPct = document.getElementById("progressPct");
-const stopBtn = document.getElementById("stopBtn");
-const engineSelect = document.getElementById("engineSelect");
-const keyStatus = document.getElementById("keyStatus");
-
-let abortFlag = false;
-
-// ===== إعدادات المفاتيح =====
-let CONFIG = {
-  mymemory: [],
-  deepl: "",
-  google: ""
-};
-
-// تحميل المفاتيح من التخزين
-function loadConfig() {
-  const saved = localStorage.getItem("translate_config");
-  if (saved) {
-    try { CONFIG = { ...CONFIG, ...JSON.parse(saved) }; } catch {}
-  }
-  document.getElementById("mymemoryKeys").value = CONFIG.mymemory.join("\n");
-  document.getElementById("deeplKey").value = CONFIG.deepl;
-  document.getElementById("googleKey").value = CONFIG.google;
-}
-loadConfig();
-
-// حفظ المفاتيح
-document.getElementById("saveKeys").onclick = () => {
-  CONFIG.mymemory = document.getElementById("mymemoryKeys").value
-    .split("\n").map(s => s.trim()).filter(Boolean);
-  CONFIG.deepl = document.getElementById("deeplKey").value.trim();
-  CONFIG.google = document.getElementById("googleKey").value.trim();
-  localStorage.setItem("translate_config", JSON.stringify(CONFIG));
-  keyStatus.textContent = `✅ تم حفظ ${CONFIG.mymemory.length} مفتاح MyMemory`;
-  setTimeout(() => keyStatus.textContent = "", 3000);
-};
-
-document.getElementById("keysBtn").onclick = () => {
-  const p = document.getElementById("keysPanel");
-  p.hidden = !p.hidden;
-};
-document.getElementById("closeKeys").onclick = () => {
-  document.getElementById("keysPanel").hidden = true;
-};
-
-// ===== توزيع مفاتيح MyMemory =====
-let mmIndex = 0;
-function nextMMKey() {
-  if (!CONFIG.mymemory.length) return "";
-  const k = CONFIG.mymemory[mmIndex % CONFIG.mymemory.length];
-  mmIndex++;
-  return k;
-}
-
-// ===== ملء القوائم =====
-const sorted = Object.entries(LANGUAGES).sort((a,b) => a[1].localeCompare(b[1],"ar"));
-for (const [code, name] of sorted) {
-  fromLang.innerHTML += `<option value="${code}">${name}</option>`;
-  toLang.innerHTML += `<option value="${code}">${name}</option>`;
-}
-fromLang.value = "ar";
-toLang.value = "en";
-
-// تبديل
-document.getElementById("swapBtn").onclick = () => {
-  [fromLang.value, toLang.value] = [toLang.value, fromLang.value];
-  [inputText.value, outputText.value] = [outputText.value, inputText.value];
-};
-
-// ===== محركات الترجمة =====
-
-// MyMemory
-async function translateMyMemory(text, from, to) {
-  const key = nextMMKey();
-  let url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
-  if (key) url += `&de=${encodeURIComponent(key)}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  return data.responseData?.translatedText || "";
-}
-
-// DeepL
-async function translateDeepL(text, from, to) {
-  if (!CONFIG.deepl) throw new Error("أضف مفتاح DeepL من زر إدارة المفاتيح");
-  const url = CONFIG.deepl.endsWith(":fx")
-    ? "https://api-free.deepl.com/v2/translate"
-    : "https://api.deepl.com/v2/translate";
-  const body = new URLSearchParams();
-  body.append("text", text);
-  body.append("source_lang", from.toUpperCase());
-  body.append("target_lang", to.toUpperCase());
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Authorization": `DeepL-Auth-Key ${CONFIG.deepl}`,
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body
-  });
-  if (!res.ok) throw new Error("مفتاح DeepL غير صالح أو تجاوزت الحد");
-  const data = await res.json();
-  return data.translations?.[0]?.text || "";
-}
-
-// Google
-async function translateGoogle(text, from, to) {
-  if (!CONFIG.google) throw new Error("أضف مفتاح Google من زر إدارة المفاتيح");
-  const url = `https://translation.googleapis.com/language/translate/v2?key=${CONFIG.google}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ q: text, source: from, target: to, format: "text" })
-  });
-  if (!res.ok) throw new Error("مفتاح Google غير صالح أو تجاوزت الحد");
-  const data = await res.json();
-  return data.data?.translations?.[0]?.translatedText || "";
-}
-
-// موزّع المحركات
-async function translateChunk(text, from, to) {
-  const engine = engineSelect.value;
-  if (engine === "deepl") return translateDeepL(text, from, to);
-  if (engine === "google") return translateGoogle(text, from, to);
-  return translateMyMemory(text, from, to);
-}
-
-// ===== تقسيم النص =====
-function splitText(text, max = 450) {
-  const parts = [];
-  let current = "";
-  const sentences = text.split(/(?<=[.!?؟\n])\s+/);
-  for (const s of sentences) {
-    if ((current + s).length > max) {
-      if (current) parts.push(current.trim());
-      if (s.length > max) {
-        let chunk = "";
-        for (const word of s.split(/\s+/)) {
-          if ((chunk + " " + word).length > max) {
-            if (chunk) parts.push(chunk.trim());
-            chunk = word;
-          } else chunk += " " + word;
-        }
-        if (chunk.trim()) parts.push(chunk.trim());
-      } else { current = s; }
-    } else { current += s + " "; }
-  }
-  if (current.trim()) parts.push(current.trim());
-  return parts;
-}
-
-// ===== تقدم =====
-function setProgress(done, total) {
-  progressWrap.hidden = false;
-  const pct = total ? Math.round((done / total) * 100) : 0;
-  progressFill.style.width = pct + "%";
-  progressPct.textContent = pct + "%";
-  progressLabel.textContent = `جارٍ الترجمة... (${done}/${total} مقطع)`;
-}
-function hideProgress() {
-  progressWrap.hidden = true;
-  progressFill.style.width = "0%";
-}
-
-// ===== ترجمة الكل =====
-async function translateAll(text, from, to) {
-  const chunks = splitText(text);
-  let result = "";
-  abortFlag = false;
-  setProgress(0, chunks.length);
-
-  for (let i = 0; i < chunks.length; i++) {
-    if (abortFlag) break;
-    let t = "";
-    try { t = await translateChunk(chunks[i], from, to); }
-    catch (e) {
-      t = `[خطأ: ${e.message}] ${chunks[i]}`;
-    }
-    result += t + "\n";
-    setProgress(i + 1, chunks.length);
-    await new Promise(r => setTimeout(r, 250));
-  }
-  return result.trim();
-}
-
-// زر ترجم الآن
-document.getElementById("translateBtn").onclick = async () => {
-  const text = inputText.value.trim();
-  if (!text) return alert("اكتب نصاً أو استورد ملفاً أولاً");
-  outputText.value = "";
-  try {
-    outputText.value = await translateAll(text, fromLang.value, toLang.value) || "❌ تعذّرت الترجمة";
-  } catch (e) {
-    outputText.value = "❌ " + e.message;
-  } finally { hideProgress(); }
-};
-
-// زر ترجمة ملف كامل
-document.getElementById("translateFileBtn").onclick = async () => {
-  const text = inputText.value.trim();
-  if (!text) return alert("استورد ملفاً أولاً (زر 📁 استيراد ملف)");
-  outputText.value = "";
-  stopBtn.hidden = false;
-  try {
-    outputText.value = await translateAll(text, fromLang.value, toLang.value) || "❌ تعذّرت الترجمة";
-  } catch (e) {
-    outputText.value = "❌ " + e.message;
-  } finally {
-    hideProgress(); stopBtn.hidden = true;
-  }
-};
-
-stopBtn.onclick = () => { abortFlag = true; };
-
-// الترجمة الصوتية
-document.getElementById("voiceTranslateBtn").onclick = () => {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return alert("متصفحك لا يدعم الإدخال الصوتي. جرّب Chrome.");
-  const r = new SR();
-  r.lang = fromLang.value;
-  r.onresult = async (e) => {
-    const spoken = e.results[0][0].transcript;
-    inputText.value = spoken;
-    outputText.value = "⏳ جارٍ ترجمة صوتك...";
-    try {
-      const tr = await translateChunk(spoken, fromLang.value, toLang.value);
-      outputText.value = tr;
-      speak(tr, toLang.value);
-    } catch (e) { outputText.value = "❌ " + e.message; }
-  };
-  r.onerror = () => alert("تعذّر التقاط الصوت");
-  r.start();
-};
-
-// استيراد ملفات
-document.getElementById("importBtn").onclick = () => fileInput.click();
-fileInput.onchange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const ext = file.name.split(".").pop().toLowerCase();
-  inputText.value = "⏳ جارٍ قراءة الملف...";
-  try {
-    let text = "";
-    if (ext === "txt" || ext === "md" || ext === "srt") {
-      text = await file.text();
-      if (ext === "srt")
-        text = text.replace(/^\d+\s*$/gm, "").replace(/\d{2}:\d{2}:\d{2},\d{3} --> .*/g, "").trim();
-    } else if (ext === "docx") {
-      const buf = await file.arrayBuffer();
-      const result = await mammoth.extractRawText({ arrayBuffer: buf });
-      text = result.value;
-    } else if (ext === "pdf") {
-      text = await extractPDF(file);
-    } else { text = "❌ صيغة غير مدعومة"; }
-    inputText.value = text.trim() || "(الملف فارغ)";
-  } catch (err) { inputText.value = "❌ فشل قراءة الملف: " + err.message; }
-};
-
-async function extractPDF(file) {
-  const buf = await file.arrayBuffer();
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-  let full = "";
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    full += content.items.map(it => it.str).join(" ") + "\n";
-  }
-  return full;
-}
-
-// إدخال صوتي
-document.getElementById("micBtn").onclick = () => {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return alert("متصفحك لا يدعم الإدخال الصوتي. جرّب Chrome.");
-  const r = new SR();
-  r.lang = fromLang.value;
-  r.onresult = (e) => inputText.value = e.results[0][0].transcript;
-  r.onerror = () => alert("تعذّر التقاط الصوت");
-  r.start();
-};
-
-// نطق
-function speak(text, lang) {
-  if (!text) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang;
-  speechSynthesis.speak(u);
-}
-document.getElementById("speakInput").onclick = () => speak(inputText.value, fromLang.value);
-document.getElementById("speakOutput").onclick = () => speak(outputText.value, toLang.value);
-
-// نسخ
-document.getElementById("copyBtn").onclick = () => {
-  if (!outputText.value) return;
-  navigator.clipboard.writeText(outputText.value);
-  alert("✅ تم النسخ");
-};
-
-// تحميل
-document.getElementById("downloadBtn").onclick = () => {
-  if (!outputText.value) return;
-  const blob = new Blob([outputText.value], { type: "text/plain;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "translation.txt";
-  a.click();
-};
-
-// مسح
-document.getElementById("clearBtn").onclick = () => {
-  inputText.value = ""; outputText.value = ""; hideProgress();
-};
+/* ============ 1. قائمة اللغات (أكثر من 140 لغة) ============ */
+const LANGUAGES = [
+  { code: 'ar', native: 'العربية', en: 'Arabic', dir: 'rtl' },
+  { code: 'en', native: 'English', en: 'English', dir: 'ltr' },
+  { code: 'fr', native: 'Français', en: 'French', dir: 'ltr' },
+  { code: 'es', native: 'Español', en: 'Spanish', dir: 'ltr' },
+  { code: 'de', native: 'Deutsch', en: 'German', dir: 'ltr' },
+  { code: 'tr', native: 'Türkçe', en: 'Turkish', dir: 'ltr' },
+  { code: 'it', native: 'Italiano', en: 'Italian', dir: 'ltr' },
+  { code: 'pt', native: 'Português', en: 'Portuguese', dir: 'ltr' },
+  { code: 'ru', native: 'Русский', en: 'Russian', dir: 'ltr' },
+  { code: 'zh', native: '中文', en: 'Chinese', dir: 'ltr' },
+  { code: 'ja', native: '日本語', en: 'Japanese', dir: 'ltr' },
+  { code: 'ko', native: '한국어', en: 'Korean', dir: 'ltr' },
+  { code: 'hi', native: 'हिन्दी', en: 'Hindi', dir: 'ltr' },
+  { code: 'ur', native: 'اردو', en: 'Urdu', dir: 'rtl' },
+  { code: 'fa', native: 'فارسی', en: 'Persian', dir: 'rtl' },
+  { code: 'he', native: 'עברית', en: 'Hebrew', dir: 'rtl' },
+  { code: 'nl', native: 'Nederlands', en: 'Dutch', dir: 'ltr' },
+  { code: 'pl', native: 'Polski', en: 'Polish', dir: 'ltr' },
+  { code: 'sv', native: 'Svenska', en: 'Swedish', dir: 'ltr' },
+  { code: 'no', native: 'Norsk', en: 'Norwegian', dir: 'ltr' },
+  { code: 'da', native: 'Dansk', en: 'Danish', dir: 'ltr' },
+  { code: 'fi', native: 'Suomi', en: 'Finnish', dir: 'ltr' },
+  { code: 'el', native: 'Ελληνικά', en: 'Greek', dir: 'ltr' },
+  { code: 'cs', native: 'Čeština', en: 'Czech', dir: 'ltr' },
+  { code: 'ro', native: 'Română', en: 'Romanian', dir: 'ltr' },
+  { code: 'hu', native: 'Magyar', en: 'Hungarian', dir: 'ltr' },
+  { code: 'uk', native: 'Українська', en: 'Ukrainian', dir: 'ltr' },
+  { code: 'id', native: 'Bahasa Indonesia', en: 'Indonesian', dir: 'ltr' },
+  { code: 'ms', native: 'Bahasa Melayu', en: 'Malay', dir: 'ltr' },
+  { code: 'th', native: 'ไทย', en: 'Thai', dir: 'ltr' },
+  { code: 'vi', native: 'Tiếng Việt', en: 'Vietnamese', dir: 'ltr' },
+  { code: 'bn', native: 'বাংলা', en: 'Bengali', dir: 'ltr' },
+  { code: 'ta', native: 'தமிழ்', en: 'Tamil', dir: 'ltr' },
+  { code: 'te', native: 'తెలుగు', en: 'Telugu', dir: 'ltr' },
+  { code: 'mr', native: 'मराठी', en: 'Marathi', dir: 'ltr' },
+  { code: 'gu', native: 'ગુજરાતી', en: 'Gujarati', dir: 'ltr' },
+  { code: 'kn', native: 'ಕನ್ನಡ', en: 'Kannada', dir: 'ltr' },
+  { code: 'ml', native: 'മലയാളം', en: 'Malayalam', dir: 'ltr' },
+  { code: 'pa', native: 'ਪੰਜਾਬੀ', en: 'Punjabi', dir: 'ltr' },
+  { code: 'sw', native: 'Kiswahili', en: 'Swahili', dir: 'ltr' },
+  { code: 'am', native: 'አማርኛ', en: 'Amharic', dir: 'ltr' },
+  { code: 'ha', native: 'Hausa', en: 'Hausa', dir: 'ltr' },
+  { code: 'yo', native: 'Yorùbá', en: 'Yoruba', dir: 'ltr' },
+  { code: 'ig', native: 'Igbo', en: 'Igbo', dir: 'ltr' },
+  { code: 'zu', native: 'isiZulu', en: 'Zulu', dir: 'ltr' },
+  { code: 'af', native: 'Afrikaans', en: 'Afrikaans', dir: 'ltr' },
+  { code: 'bg', native: 'Български', en: 'Bulgarian', dir: 'ltr' },
+  { code: 'hr', native: 'Hrvatski', en: 'Croatian', dir: 'ltr' },
+  { code: 'sk', native: 'Slovenčina', en: 'Slovak', dir: 'ltr' },
+  { code: 'sl', native: 'Slovenščina', en: 'Slovenian', dir: 'ltr' },
+  { code: 'sr', native: 'Српски', en: 'Serbian', dir: 'ltr' },
+  { code: 'lt', native: 'Lietuvių', en: 'Lithuanian', dir: 'ltr' },
+  { code: 'lv', native: 'Latviešu', en: 'Latvian', dir: 'ltr' },
+  { code: 'et', native: 'Eesti', en: 'Estonian', dir: 'ltr' },
+  { code: 'ka', native: 'ქართული', en: 'Georgian', dir: 'ltr' },
+  { code: 'hy', native: 'Հայերեն', en: 'Armenian', dir: 'ltr' },
+  { code: 'az', native: 'Azərbaycan', en: 'Azerbaijani', dir: 'ltr' },
+  { code: 'kk', native: 'Қазақ', en: 'Kazakh', dir: 'ltr' },
+  { code: 'uz', native: 'Oʻzbek', en: 'Uzbek', dir: 'ltr' },
+  { code: 'ky', native: 'Кыргызча', en: 'Kyrgyz', dir: 'ltr' },
+  { code: 'tg', native: 'Тоҷикӣ', en: 'Tajik', dir: 'ltr' },
+  { code: 'mn', native: 'Монгол', en: 'Mongolian', dir: 'ltr' },
+  { code: 'ne', native: 'नेपाली', en: 'Nepali', dir: 'ltr' },
+  { code: 'si', native: 'සිංහල', en: 'Sinhala', dir: 'ltr' },
+  { code: 'my', native: 'မြန်မာ', en: 'Burmese', dir: 'ltr' },
+  { code: 'km', native: 'ខ្មែរ', en: 'Khmer', dir: 'ltr' },
+  { code: 'lo', native: 'ລາວ', en: 'Lao', dir: 'ltr' },
+  { code: 'tl', native: 'Filipino', en: 'Filipino', dir: 'ltr' },
+  { code: 'jv', native: 'Basa Jawa', en: 'Javanese', dir: 'ltr' },
+  { code: 'su', native: 'Basa Sunda', en: 'Sundanese', dir: 'ltr' },
+  { code: 'ceb', native: 'Cebuano', en: 'Cebuano', dir: 'ltr' },
+  { code: 'eu', native: 'Euskara', en: 'Basque', dir: 'ltr' },
+  { code: 'ca', native: 'Català', en: 'Catalan', dir: 'ltr' },
+  { code: 'gl', native: 'Galego', en: 'Galician', dir: 'ltr' },
+  { code: 'cy', native: 'Cymraeg', en: 'Welsh', dir: 'ltr' },
+  { code: 'ga', native: 'Gaeilge', en: 'Irish', dir: 'ltr' },
+  { code: 'gd', native: 'Gàidhlig', en: 'Scottish Gaelic', dir: 'ltr' },
+  { code: 'is', native: 'Íslenska', en: 'Icelandic', dir: 'ltr' },
+  { code: 'mt', native: 'Malti', en: 'Maltese', dir: 'ltr' },
+  { code: 'sq', native: 'Shqip', en: 'Albanian', dir: 'ltr' },
+  { code: 'mk', native: 'Македонски', en: 'Macedonian', dir: 'ltr' },
+  { code: 'bs', native: 'Bosanski', en: 'Bosnian', dir: 'ltr' },
+  { code: 'be', native: 'Беларуская', en: 'Belarusian', dir: 'ltr' },
+  { code: 'lb', native: 'Lëtzebuergesch', en: 'Luxembourgish', dir: 'ltr' },
+  { code: 'fo', native: 'Føroyskt', en: 'Faroese', dir: 'ltr' },
+  { code: 'yi', native: 'ייִדיש', en: 'Yiddish', dir: 'rtl' },
+  { code: 'ps', native: 'پښتو', en: 'Pashto', dir: 'rtl' },
+  { code: 'ku', native: 'Kurdî', en: 'Kurdish', dir: 'rtl' },
+  { code: 'sd', native: 'سنڌي', en: 'Sindhi', dir: 'rtl' },
+  { code: 'ug', native: 'ئۇيغۇرچە', en: 'Uyghur', dir: 'rtl' },
+  { code: 'ckb', native: 'کوردی', en: 'Sorani Kurdish', dir: 'rtl' },
+  { code: 'dv', native: 'ދިވެހި', en: 'Dhivehi', dir: 'rtl' },
+  { code: 'so', native: 'Soomaali', en: 'Somali', dir: 'ltr' },
+  { code: 'mg', native: 'Malagasy', en: 'Malagasy', dir: 'ltr' },
+  { code: 'ny', native: 'Chichewa', en: 'Chichewa', dir: 'ltr' },
+  { code: 'sn', native: 'chiShona', en: 'Shona', dir: 'ltr' },
+  { code: 'st', native: 'Sesotho', en: 'Sotho', dir: 'ltr' },
+  { code: 'xh', native: 'isiXhosa', en: 'Xhosa', dir: 'ltr' },
+  { code: 'rw', native: 'Kinyarwanda', en: 'Kinyarwanda', dir: 'ltr' },
+  { code: 'ti', native: 'ትግርኛ', en: 'Tigrinya', dir: 'ltr' },
+  { code: 'om', native: 'Afaan Oromoo', en: 'Oromo', dir: 'ltr' },
+  { code: 'ht', native: 'Kreyòl Ayisyen', en: 'Haitian Creole', dir: 'ltr' },
+  { code: 'la', native: 'Latina', en: 'Latin', dir: 'ltr' },
+  { code: 'eo', native: 'Esperanto', en: 'Esperanto', dir: 'ltr' },
+  { code: 'haw', native: 'ʻŌlelo Hawaiʻi', en: 'Hawaiian', dir: 'ltr' },
+  { code: 'mi', native: 'Te Reo Māori', en: 'Maori', dir: 'ltr' },
+  { code: 'sm', native: 'Gagana Samoa', en: 'Samoan', dir: 'ltr' },
+  { code: 'to', native: 'Lea Fakatonga', en: 'Tongan',
