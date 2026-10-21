@@ -1,95 +1,118 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قنوات عربية - البث المباشر</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ترجمة | Translate Pro</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <i class="fas fa-tv"></i>
-                <span>قنوات عربية</span>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#home">الرئيسية</a></li>
-                    <li><a href="#channels">القنوات</a></li>
-                    <li><a href="#schedule">جدول البرامج</a></li>
-                    <li><a href="#favorites">المفضلة</a></li>
-                    <li><a href="#contact">اتصل بنا</a></li>
-                </ul>
-            </nav>
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="ابحث عن قناة..." id="searchInput">
-            </div>
-        </div>
-    </header>
+  <div class="bg-glow"></div>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <h1>مرحباً بك في قنوات عربية</h1>
-        <p>شاهد قنواتك المفضلة مباشرة بجودة عالية</p>
-    </section>
-
-    <!-- Categories & Channels -->
-    <section class="categories" id="channels">
-        <h2 class="section-title">
-            <i class="fas fa-satellite-dish"></i>
-            القنوات المتاحة
-        </h2>
-
-        <div class="category-tabs">
-            <div class="tab active" data-category="all">الكل</div>
-            <div class="tab" data-category="news">أخبار</div>
-            <div class="tab" data-category="sports">رياضة</div>
-            <div class="tab" data-category="entertainment">ترفيه</div>
-            <div class="tab" data-category="kids">أطفال</div>
-            <div class="tab" data-category="religious">دينية</div>
-            <div class="tab" data-category="movies">أفلام</div>
-        </div>
-
-        <div class="channels-grid" id="channelsGrid">
-            <!-- Channels will be loaded here -->
-        </div>
-    </section>
-
-    <!-- Modal Player -->
-    <div class="modal" id="playerModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeModal">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="video-container">
-                <i class="fas fa-play-circle"></i>
-            </div>
-            <div class="player-info">
-                <h2 id="playerChannelName">اسم القناة</h2>
-                <p id="playerChannelDesc">وصف القناة</p>
-            </div>
-        </div>
+  <header class="header">
+    <div class="header-top">
+      <h1 class="logo">🌐 ترجمة</h1>
+      <button id="voiceTranslateBtn" class="voice-translate-btn">🎙️ ترجمة صوتية</button>
     </div>
+    <p class="tagline">ترجم نصوصك وصوتك بين أكثر من 100 لغة</p>
+  </header>
 
-    <!-- Footer -->
-    <footer id="contact">
-        <div class="footer-content">
-            <h3>تواصل معنا</h3>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-                <a href="#"><i class="fab fa-telegram"></i></a>
-            </div>
-            <p>© 2026 قنوات عربية - جميع الحقوق محفوظة</p>
+  <main class="container">
+    <section class="card">
+
+      <!-- ===== شريط المحرك والمفاتيح ===== -->
+      <div class="engine-bar">
+        <div class="engine-group">
+          <label>محرّك الترجمة</label>
+          <select id="engineSelect" class="lang-select">
+            <option value="mymemory">MyMemory (مجاني)</option>
+            <option value="deepl">DeepL (يحتاج مفتاح)</option>
+            <option value="google">Google Translate (يحتاج مفتاح)</option>
+          </select>
         </div>
-    </footer>
+        <button id="keysBtn" class="keys-btn">🔑 إدارة المفاتيح</button>
+      </div>
 
-    <script src="script.js"></script>
+      <!-- ===== نافذة إدارة المفاتيح ===== -->
+      <div id="keysPanel" class="keys-panel" hidden>
+        <h3>🔑 مفاتيح API</h3>
+        <p class="hint">أضف مفتاحاً واحداً في كل سطر. للنصوص الطويلة أضف عدة مفاتيح MyMemory لتوزيع الحمل.</p>
+
+        <label class="key-label">مفاتيح MyMemory (email أو مفتاح)</label>
+        <textarea id="mymemoryKeys" class="key-area" placeholder="example1@mail.com&#10;example2@mail.com"></textarea>
+
+        <label class="key-label">مفتاح DeepL</label>
+        <input id="deeplKey" class="key-input" type="text" placeholder="xxxxxxxx-xxxx-xxxx:fx">
+
+        <label class="key-label">مفتاح Google Translate API</label>
+        <input id="googleKey" class="key-input" type="text" placeholder="AIza...">
+
+        <div class="keys-actions">
+          <button id="saveKeys" class="main-btn small">💾 حفظ</button>
+          <button id="closeKeys" class="stop-btn small">إغلاق</button>
+        </div>
+      </div>
+
+      <!-- ===== اللغات ===== -->
+      <div class="lang-bar">
+        <div class="lang-group">
+          <label>من</label>
+          <select id="fromLang" class="lang-select"></select>
+        </div>
+        <button id="swapBtn" class="swap-btn" title="تبديل">⇄</button>
+        <div class="lang-group">
+          <label>إلى</label>
+          <select id="toLang" class="lang-select"></select>
+        </div>
+      </div>
+
+      <div class="panes">
+        <div class="pane">
+          <textarea id="inputText" placeholder="اكتب النص هنا أو استورد ملفاً..."></textarea>
+          <div class="pane-actions">
+            <input type="file" id="fileInput" accept=".txt,.docx,.pdf,.srt,.md" hidden>
+            <button id="importBtn" class="import-btn">📁 استيراد ملف</button>
+            <button id="micBtn" class="icon-btn" title="إدخال صوتي">🎤</button>
+            <button id="speakInput" class="icon-btn" title="نطق النص">🔊</button>
+            <button id="clearBtn" class="icon-btn" title="مسح">🗑️</button>
+          </div>
+        </div>
+
+        <div class="pane">
+          <textarea id="outputText" placeholder="الترجمة..." readonly></textarea>
+          <div class="pane-actions">
+            <button id="speakOutput" class="icon-btn" title="نطق الترجمة">🔊</button>
+            <button id="copyBtn" class="icon-btn" title="نسخ">📋</button>
+            <button id="downloadBtn" class="icon-btn" title="تحميل الترجمة">💾</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== شريط التقدم ===== -->
+      <div id="progressWrap" class="progress-wrap" hidden>
+        <div class="progress-info">
+          <span id="progressLabel">جارٍ الترجمة...</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+        <div id="keyStatus" class="key-status"></div>
+      </div>
+
+      <!-- ===== أزرار ===== -->
+      <div class="action-row">
+        <button id="translateBtn" class="main-btn">ترجم الآن</button>
+        <button id="translateFileBtn" class="main-btn file-btn">📄 ترجمة ملف كامل</button>
+        <button id="stopBtn" class="stop-btn" hidden>⏹️ إيقاف</button>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="footer">صُنع بـ ❤️ — ترجمة فورية نصاً وصوتاً</footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
