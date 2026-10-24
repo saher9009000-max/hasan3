@@ -1,512 +1,332 @@
-/* ============ 1. قائمة اللغات (أكثر من 140 لغة) ============ */
-const LANGUAGES = [
-  { code: 'ar', native: 'العربية', en: 'Arabic', dir: 'rtl' },
-  { code: 'en', native: 'English', en: 'English', dir: 'ltr' },
-  { code: 'fr', native: 'Français', en: 'French', dir: 'ltr' },
-  { code: 'es', native: 'Español', en: 'Spanish', dir: 'ltr' },
-  { code: 'de', native: 'Deutsch', en: 'German', dir: 'ltr' },
-  { code: 'tr', native: 'Türkçe', en: 'Turkish', dir: 'ltr' },
-  { code: 'it', native: 'Italiano', en: 'Italian', dir: 'ltr' },
-  { code: 'pt', native: 'Português', en: 'Portuguese', dir: 'ltr' },
-  { code: 'ru', native: 'Русский', en: 'Russian', dir: 'ltr' },
-  { code: 'zh', native: '中文', en: 'Chinese', dir: 'ltr' },
-  { code: 'ja', native: '日本語', en: 'Japanese', dir: 'ltr' },
-  { code: 'ko', native: '한국어', en: 'Korean', dir: 'ltr' },
-  { code: 'hi', native: 'हिन्दी', en: 'Hindi', dir: 'ltr' },
-  { code: 'ur', native: 'اردو', en: 'Urdu', dir: 'rtl' },
-  { code: 'fa', native: 'فارسی', en: 'Persian', dir: 'rtl' },
-  { code: 'he', native: 'עברית', en: 'Hebrew', dir: 'rtl' },
-  { code: 'nl', native: 'Nederlands', en: 'Dutch', dir: 'ltr' },
-  { code: 'pl', native: 'Polski', en: 'Polish', dir: 'ltr' },
-  { code: 'sv', native: 'Svenska', en: 'Swedish', dir: 'ltr' },
-  { code: 'no', native: 'Norsk', en: 'Norwegian', dir: 'ltr' },
-  { code: 'da', native: 'Dansk', en: 'Danish', dir: 'ltr' },
-  { code: 'fi', native: 'Suomi', en: 'Finnish', dir: 'ltr' },
-  { code: 'el', native: 'Ελληνικά', en: 'Greek', dir: 'ltr' },
-  { code: 'cs', native: 'Čeština', en: 'Czech', dir: 'ltr' },
-  { code: 'ro', native: 'Română', en: 'Romanian', dir: 'ltr' },
-  { code: 'hu', native: 'Magyar', en: 'Hungarian', dir: 'ltr' },
-  { code: 'uk', native: 'Українська', en: 'Ukrainian', dir: 'ltr' },
-  { code: 'id', native: 'Bahasa Indonesia', en: 'Indonesian', dir: 'ltr' },
-  { code: 'ms', native: 'Bahasa Melayu', en: 'Malay', dir: 'ltr' },
-  { code: 'th', native: 'ไทย', en: 'Thai', dir: 'ltr' },
-  { code: 'vi', native: 'Tiếng Việt', en: 'Vietnamese', dir: 'ltr' },
-  { code: 'bn', native: 'বাংলা', en: 'Bengali', dir: 'ltr' },
-  { code: 'ta', native: 'தமிழ்', en: 'Tamil', dir: 'ltr' },
-  { code: 'te', native: 'తెలుగు', en: 'Telugu', dir: 'ltr' },
-  { code: 'mr', native: 'मराठी', en: 'Marathi', dir: 'ltr' },
-  { code: 'gu', native: 'ગુજરાતી', en: 'Gujarati', dir: 'ltr' },
-  { code: 'kn', native: 'ಕನ್ನಡ', en: 'Kannada', dir: 'ltr' },
-  { code: 'ml', native: 'മലയാളം', en: 'Malayalam', dir: 'ltr' },
-  { code: 'pa', native: 'ਪੰਜਾਬੀ', en: 'Punjabi', dir: 'ltr' },
-  { code: 'sw', native: 'Kiswahili', en: 'Swahili', dir: 'ltr' },
-  { code: 'am', native: 'አማርኛ', en: 'Amharic', dir: 'ltr' },
-  { code: 'ha', native: 'Hausa', en: 'Hausa', dir: 'ltr' },
-  { code: 'yo', native: 'Yorùbá', en: 'Yoruba', dir: 'ltr' },
-  { code: 'ig', native: 'Igbo', en: 'Igbo', dir: 'ltr' },
-  { code: 'zu', native: 'isiZulu', en: 'Zulu', dir: 'ltr' },
-  { code: 'af', native: 'Afrikaans', en: 'Afrikaans', dir: 'ltr' },
-  { code: 'bg', native: 'Български', en: 'Bulgarian', dir: 'ltr' },
-  { code: 'hr', native: 'Hrvatski', en: 'Croatian', dir: 'ltr' },
-  { code: 'sk', native: 'Slovenčina', en: 'Slovak', dir: 'ltr' },
-  { code: 'sl', native: 'Slovenščina', en: 'Slovenian', dir: 'ltr' },
-  { code: 'sr', native: 'Српски', en: 'Serbian', dir: 'ltr' },
-  { code: 'lt', native: 'Lietuvių', en: 'Lithuanian', dir: 'ltr' },
-  { code: 'lv', native: 'Latviešu', en: 'Latvian', dir: 'ltr' },
-  { code: 'et', native: 'Eesti', en: 'Estonian', dir: 'ltr' },
-  { code: 'ka', native: 'ქართული', en: 'Georgian', dir: 'ltr' },
-  { code: 'hy', native: 'Հայերեն', en: 'Armenian', dir: 'ltr' },
-  { code: 'az', native: 'Azərbaycan', en: 'Azerbaijani', dir: 'ltr' },
-  { code: 'kk', native: 'Қазақ', en: 'Kazakh', dir: 'ltr' },
-  { code: 'uz', native: 'Oʻzbek', en: 'Uzbek', dir: 'ltr' },
-  { code: 'ky', native: 'Кыргызча', en: 'Kyrgyz', dir: 'ltr' },
-  { code: 'tg', native: 'Тоҷикӣ', en: 'Tajik', dir: 'ltr' },
-  { code: 'mn', native: 'Монгол', en: 'Mongolian', dir: 'ltr' },
-  { code: 'ne', native: 'नेपाली', en: 'Nepali', dir: 'ltr' },
-  { code: 'si', native: 'සිංහල', en: 'Sinhala', dir: 'ltr' },
-  { code: 'my', native: 'မြန်မာ', en: 'Burmese', dir: 'ltr' },
-  { code: 'km', native: 'ខ្មែរ', en: 'Khmer', dir: 'ltr' },
-  { code: 'lo', native: 'ລາວ', en: 'Lao', dir: 'ltr' },
-  { code: 'tl', native: 'Filipino', en: 'Filipino', dir: 'ltr' },
-  { code: 'jv', native: 'Basa Jawa', en: 'Javanese', dir: 'ltr' },
-  { code: 'su', native: 'Basa Sunda', en: 'Sundanese', dir: 'ltr' },
-  { code: 'ceb', native: 'Cebuano', en: 'Cebuano', dir: 'ltr' },
-  { code: 'eu', native: 'Euskara', en: 'Basque', dir: 'ltr' },
-  { code: 'ca', native: 'Català', en: 'Catalan', dir: 'ltr' },
-  { code: 'gl', native: 'Galego', en: 'Galician', dir: 'ltr' },
-  { code: 'cy', native: 'Cymraeg', en: 'Welsh', dir: 'ltr' },
-  { code: 'ga', native: 'Gaeilge', en: 'Irish', dir: 'ltr' },
-  { code: 'gd', native: 'Gàidhlig', en: 'Scottish Gaelic', dir: 'ltr' },
-  { code: 'is', native: 'Íslenska', en: 'Icelandic', dir: 'ltr' },
-  { code: 'mt', native: 'Malti', en: 'Maltese', dir: 'ltr' },
-  { code: 'sq', native: 'Shqip', en: 'Albanian', dir: 'ltr' },
-  { code: 'mk', native: 'Македонски', en: 'Macedonian', dir: 'ltr' },
-  { code: 'bs', native: 'Bosanski', en: 'Bosnian', dir: 'ltr' },
-  { code: 'be', native: 'Беларуская', en: 'Belarusian', dir: 'ltr' },
-  { code: 'lb', native: 'Lëtzebuergesch', en: 'Luxembourgish', dir: 'ltr' },
-  { code: 'fo', native: 'Føroyskt', en: 'Faroese', dir: 'ltr' },
-  { code: 'yi', native: 'ייִדיש', en: 'Yiddish', dir: 'rtl' },
-  { code: 'ps', native: 'پښتو', en: 'Pashto', dir: 'rtl' },
-  { code: 'ku', native: 'Kurdî', en: 'Kurdish', dir: 'rtl' },
-  { code: 'sd', native: 'سنڌي', en: 'Sindhi', dir: 'rtl' },
-  { code: 'ug', native: 'ئۇيغۇرچە', en: 'Uyghur', dir: 'rtl' },
-  { code: 'ckb', native: 'کوردی', en: 'Sorani Kurdish', dir: 'rtl' },
-  { code: 'dv', native: 'ދިވެހި', en: 'Dhivehi', dir: 'rtl' },
-  { code: 'so', native: 'Soomaali', en: 'Somali', dir: 'ltr' },
-  { code: 'mg', native: 'Malagasy', en: 'Malagasy', dir: 'ltr' },
-  { code: 'ny', native: 'Chichewa', en: 'Chichewa', dir: 'ltr' },
-  { code: 'sn', native: 'chiShona', en: 'Shona', dir: 'ltr' },
-  { code: 'st', native: 'Sesotho', en: 'Sotho', dir: 'ltr' },
-  { code: 'xh', native: 'isiXhosa', en: 'Xhosa', dir: 'ltr' },
-  { code: 'rw', native: 'Kinyarwanda', en: 'Kinyarwanda', dir: 'ltr' },
-  { code: 'ti', native: 'ትግርኛ', en: 'Tigrinya', dir: 'ltr' },
-  { code: 'om', native: 'Afaan Oromoo', en: 'Oromo', dir: 'ltr' },
-  { code: 'ht', native: 'Kreyòl Ayisyen', en: 'Haitian Creole', dir: 'ltr' },
-  { code: 'la', native: 'Latina', en: 'Latin', dir: 'ltr' },
-  { code: 'eo', native: 'Esperanto', en: 'Esperanto', dir: 'ltr' },
-  { code: 'haw', native: 'ʻŌlelo Hawaiʻi', en: 'Hawaiian', dir: 'ltr' },
-  { code: 'mi', native: 'Te Reo Māori', en: 'Maori', dir: 'ltr' },
-  { code: 'sm', native: 'Gagana Samoa', en: 'Samoan', dir: 'ltr' },
-  { code: 'to', native: 'Lea Fakatonga', en: 'Tongan', dir: 'ltr' },
-  { code: 'fj', native: 'Vosa Vakaviti', en: 'Fijian', dir: 'ltr' },
-  { code: 'qu', native: 'Runasimi', en: 'Quechua', dir: 'ltr' },
-  { code: 'ay', native: 'Aymar aru', en: 'Aymara', dir: 'ltr' },
-  { code: 'gn', native: "Avañe'ẽ", en: 'Guarani', dir: 'ltr' },
-  { code: 'nah', native: 'Nāhuatl', en: 'Nahuatl', dir: 'ltr' },
-  { code: 'iu', native: 'ᐃᓄᒃᑎᑐᑦ', en: 'Inuktitut', dir: 'ltr' },
-  { code: 'kl', native: 'Kalaallisut', en: 'Greenlandic', dir: 'ltr' },
-  { code: 'bo', native: 'བོད་སྐད', en: 'Tibetan', dir: 'ltr' },
-  { code: 'dz', native: 'རྫོང་ཁ', en: 'Dzongkha', dir: 'ltr' },
-  { code: 'tt', native: 'Татарча', en: 'Tatar', dir: 'ltr' },
-  { code: 'ba', native: 'Башҡорт', en: 'Bashkir', dir: 'ltr' },
-  { code: 'cv', native: 'Чӑвашла', en: 'Chuvash', dir: 'ltr' },
-  { code: 'ce', native: 'Нохчийн', en: 'Chechen', dir: 'ltr' },
-  { code: 'os', native: 'Ирон', en: 'Ossetian', dir: 'ltr' },
-  { code: 'ab', native: 'Аҧсуа', en: 'Abkhaz', dir: 'ltr' },
-  { code: 'av', native: 'Авар', en: 'Avar', dir: 'ltr' },
-  { code: 'kab', native: 'Taqbaylit', en: 'Kabyle', dir: 'ltr' },
-  { code: 'tzm', native: 'ⵜⴰⵎⴰⵣⵉⵖⵜ', en: 'Tamazight', dir: 'ltr' },
-  { code: 'ber', native: 'ⵜⴰⵎⴰⵣⵉⵖⵜ', en: 'Berber', dir: 'ltr' },
-  { code: 'wo', native: 'Wolof', en: 'Wolof', dir: 'ltr' },
-  { code: 'ff', native: 'Fulfulde', en: 'Fula', dir: 'ltr' },
-  { code: 'bm', native: 'Bamanankan', en: 'Bambara', dir: 'ltr' },
-  { code: 'tw', native: 'Twi', en: 'Twi', dir: 'ltr' },
-  { code: 'ee', native: 'Eʋegbe', en: 'Ewe', dir: 'ltr' },
-  { code: 'lg', native: 'Luganda', en: 'Luganda', dir: 'ltr' },
-  { code: 'ak', native: 'Akan', en: 'Akan', dir: 'ltr' },
-  { code: 'ln', native: 'Lingála', en: 'Lingala', dir: 'ltr' },
-  { code: 'kg', native: 'Kikongo', en: 'Kongo', dir: 'ltr' },
-  { code: 'lu', native: 'Kiluba', en: 'Luba', dir: 'ltr' },
-  { code: 'nso', native: 'Sepedi', en: 'Sepedi', dir: 'ltr' },
-  { code: 'ts', native: 'Xitsonga', en: 'Tsonga', dir: 'ltr' },
-  { code: 've', native: 'Tshivenda', en: 'Venda', dir: 'ltr' },
-  { code: 'tn', native: 'Setswana', en: 'Tswana', dir: 'ltr' },
-  { code: 'ss', native: 'siSwati', en: 'Swati', dir: 'ltr' },
-  { code: 'nr', native: 'isiNdebele', en: 'Ndebele', dir: 'ltr' },
-];
-
-/* ============ 2. نصوص الواجهة القابلة للترجمة ============ */
-const TRANSLATIONS = {
-  ar: {
-    heroTitle: 'ترجم أي شيء بدقة احترافية',
-    heroSub: 'ترجمة فورية بالذكاء الاصطناعي تدعم أكثر من 140 لغة — نصوص، ملفات، صور وصوت.',
-    tabText: 'نص', tabFiles: 'ملفات',
-    translateNow: 'ترجم الآن',
-    placeholderText: 'اكتب النص هنا...',
-    dropTitle: 'اسحب وأفلت ملفك هنا',
-    dropHint: 'يدعم: PDF, DOCX, TXT — صور PNG/JPG — صوت MP3/WAV/M4A',
-    browse: 'اختر ملفاً',
-    translating: 'جارٍ الترجمة...',
-    resultTitle: 'النتيجة',
-    copy: 'نسخ', download: 'تنزيل',
-    privacy: 'الخصوصية', terms: 'الشروط', contact: 'اتصل بنا',
-    footerCopy: '© 2026 LinguaPro — جميع الحقوق محفوظة',
-    langPlaceholder: 'ابحث عن لغة...',
-    copied: '✅ تم النسخ!',
-    done: '✅ اكتملت الترجمة!',
-    empty: '⚠️ يرجى إدخال نص أو اختيار ملف أولاً'
-  },
-  en: {
-    heroTitle: 'Translate Anything with Professional Accuracy',
-    heroSub: 'Instant AI translation supporting 140+ languages — text, files, images and audio.',
-    tabText: 'Text', tabFiles: 'Files',
-    translateNow: 'Translate Now',
-    placeholderText: 'Type your text here...',
-    dropTitle: 'Drag & drop your file here',
-    dropHint: 'Supports: PDF, DOCX, TXT — PNG/JPG — MP3/WAV/M4A',
-    browse: 'Browse file',
-    translating: 'Translating...',
-    resultTitle: 'Result',
-    copy: 'Copy', download: 'Download',
-    privacy: 'Privacy', terms: 'Terms', contact: 'Contact',
-    footerCopy: '© 2026 LinguaPro — All rights reserved',
-    langPlaceholder: 'Search a language...',
-    copied: '✅ Copied!',
-    done: '✅ Translation complete!',
-    empty: '⚠️ Please enter text or choose a file first'
-  },
-  fr: {
-    heroTitle: 'Traduisez tout avec une précision professionnelle',
-    heroSub: "Traduction IA instantanée en 140+ langues — texte, fichiers, images et audio.",
-    tabText: 'Texte', tabFiles: 'Fichiers',
-    translateNow: 'Traduire',
-    placeholderText: 'Écrivez votre texte ici...',
-    dropTitle: 'Glissez-déposez votre fichier ici',
-    dropHint: 'Prend en charge : PDF, DOCX, TXT — PNG/JPG — MP3/WAV/M4A',
-    browse: 'Choisir un fichier',
-    translating: 'Traduction...',
-    resultTitle: 'Résultat',
-    copy: 'Copier', download: 'Télécharger',
-    privacy: 'Confidentialité', terms: 'Conditions', contact: 'Contact',
-    footerCopy: '© 2026 LinguaPro — Tous droits réservés',
-    langPlaceholder: 'Rechercher une langue...',
-    copied: '✅ Copié !', done: '✅ Traduction terminée !',
-    empty: '⚠️ Veuillez saisir un texte ou choisir un fichier'
-  },
-  es: {
-    heroTitle: 'Traduce cualquier cosa con precisión profesional',
-    heroSub: 'Traducción instantánea con IA en más de 140 idiomas — texto, archivos, imágenes y audio.',
-    tabText: 'Texto', tabFiles: 'Archivos',
-    translateNow: 'Traducir',
-    placeholderText: 'Escribe tu texto aquí...',
-    dropTitle: 'Arrastra y suelta tu archivo aquí',
-    dropHint: 'Compatible: PDF, DOCX, TXT — PNG/JPG — MP3/WAV/M4A',
-    browse: 'Elegir archivo',
-    translating: 'Traduciendo...',
-    resultTitle: 'Resultado',
-    copy: 'Copiar', download: 'Descargar',
-    privacy: 'Privacidad', terms: 'Términos', contact: 'Contacto',
-    footerCopy: '© 2026 LinguaPro — Todos los derechos reservados',
-    langPlaceholder: 'Buscar idioma...',
-    copied: '✅ ¡Copiado!', done: '✅ ¡Traducción completada!',
-    empty: '⚠️ Introduce un texto o elige un archivo'
-  },
-  de: {
-    heroTitle: 'Übersetze alles mit professioneller Präzision',
-    heroSub: 'Sofortige KI-Übersetzung in über 140 Sprachen — Text, Dateien, Bilder und Audio.',
-    tabText: 'Text', tabFiles: 'Dateien',
-    translateNow: 'Übersetzen',
-    placeholderText: 'Text hier eingeben...',
-    dropTitle: 'Datei hierher ziehen',
-    dropHint: 'Unterstützt: PDF, DOCX, TXT — PNG/JPG — MP3/WAV/M4A',
-    browse: 'Datei wählen',
-    translating: 'Übersetze...',
-    resultTitle: 'Ergebnis',
-    copy: 'Kopieren', download: 'Herunterladen',
-    privacy: 'Datenschutz', terms: 'Bedingungen', contact: 'Kontakt',
-    footerCopy: '© 2026 LinguaPro — Alle Rechte vorbehalten',
-    langPlaceholder: 'Sprache suchen...',
-    copied: '✅ Kopiert!', done: '✅ Übersetzung fertig!',
-    empty: '⚠️ Bitte Text eingeben oder Datei wählen'
-  },
-  tr: {
-    heroTitle: 'Her şeyi profesyonel doğrulukla çevir',
-    heroSub: "140'tan fazla dilde anında AI çevirisi — metin, dosya, görsel ve ses.",
-    tabText: 'Metin', tabFiles: 'Dosyalar',
-    translateNow: 'Çevir',
-    placeholderText: 'Metninizi buraya yazın...',
-    dropTitle: 'Dosyanızı buraya sürükleyin',
-    dropHint: 'Destekler: PDF, DOCX, TXT — PNG/JPG — MP3/WAV/M4A',
-    browse: 'Dosya seç',
-    translating: 'Çevriliyor...',
-    resultTitle: 'Sonuç',
-    copy: 'Kopyala', download: 'İndir',
-    privacy: 'Gizlilik', terms: 'Şartlar', contact: 'İletişim',
-    footerCopy: '© 2026 LinguaPro — Tüm hakları saklıdır',
-    langPlaceholder: 'Dil ara...',
-    copied: '✅ Kopyalandı!', done: '✅ Çeviri tamamlandı!',
-    empty: '⚠️ Lütfen metin girin veya dosya seçin'
-  }
+// 1. قاموس اللغات
+const languages = {
+    auto: "🔍 اكتشاف تلقائي", ar: "🇸🇦 العربية", en: "🇺🇸 الإنجليزية", fr: "🇫🇷 الفرنسية",
+    es: "🇪🇸 الإسبانية", de: "🇩🇪 الألمانية", it: "🇮🇹 الإيطالية", pt: "🇵🇹 البرتغالية",
+    ru: "🇷🇺 الروسية", zh: "🇨🇳 الصينية", ja: "🇯🇵 اليابانية", ko: "🇰🇷 الكورية",
+    tr: "🇹🇷 التركية", hi: "🇮🇳 الهندية", ur: "🇵🇰 الأردية", fa: "🇮🇷 الفارسية"
 };
 
-/* ============ 3. الحالة ============ */
-let currentLang = 'ar';
-let selectedFile = null;
+// 2. عناصر DOM
+const $ = id => document.getElementById(id);
+const sourceLang = $('sourceLang'), targetLang = $('targetLang');
+const sourceText = $('sourceText'), targetText = $('targetText');
+const translateBtn = $('translateBtn'), swapBtn = $('swapBtn');
+const clearBtn = $('clearBtn'), copyBtn = $('copyBtn');
+const voiceBtn = $('voiceBtn'), speakSource = $('speakSource'), speakTarget = $('speakTarget');
+const fileInput = $('fileInput'), charCount = $('charCount'), statusEl = $('status');
+const themeToggle = $('themeToggle'), toast = $('toast'), aiToggle = $('aiToggle');
+const historyBtn = $('historyBtn'), historyModal = $('historyModal'), historyList = $('historyList'), clearHistoryBtn = $('clearHistoryBtn');
+const settingsBtn = $('settingsBtn'), settingsModal = $('settingsModal');
+const apiEndpoint = $('apiEndpoint'), apiKey = $('apiKey'), pasteKeyBtn = $('pasteKeyBtn'), testConnectionBtn = $('testConnectionBtn');
+const modelsBtn = $('modelsBtn'), modelsModal = $('modelsModal'), modelsList = $('modelsList'), refreshModelsBtn = $('refreshModelsBtn'), currentModelName = $('currentModelName');
+const closeBtns = document.querySelectorAll('.close-btn');
 
-/* ============ 4. عناصر DOM ============ */
-const $ = (sel) => document.querySelector(sel);
-const langBtn = $('#langBtn');
-const langDropdown = $('#langDropdown');
-const langList = $('#langList');
-const langSearch = $('#langSearch');
-const currentLangLabel = $('#currentLangLabel');
-const sourceText = $('#sourceText');
-const translateTextBtn = $('#translateTextBtn');
-const translateFileBtn = $('#translateFileBtn');
-const dropzone = $('#dropzone');
-const fileInput = $('#fileInput');
-const filePreview = $('#filePreview');
-const fileName = $('#fileName');
-const fileSize = $('#fileSize');
-const fileIcon = $('#fileIcon');
-const removeFile = $('#removeFile');
-const progressWrap = $('#progressWrap');
-const progressFill = $('#progressFill');
-const result = $('#result');
-const resultText = $('#resultText');
-const copyBtn = $('#copyBtn');
-const downloadBtn = $('#downloadBtn');
-const toast = $('#toast');
-
-/* ============ 5. بناء قائمة اللغات ============ */
-function renderLanguages(filter = '') {
-  const q = filter.toLowerCase().trim();
-  langList.innerHTML = '';
-  LANGUAGES
-    .filter(l => !q || l.native.toLowerCase().includes(q) || l.en.toLowerCase().includes(q))
-    .forEach(lang => {
-      const li = document.createElement('li');
-      li.setAttribute('role', 'option');
-      li.dataset.code = lang.code;
-      if (lang.code === currentLang) li.classList.add('active');
-      li.innerHTML = `<span class="lang-native">${lang.native}</span><span class="lang-en">${lang.en}</span>`;
-      li.addEventListener('click', () => selectLanguage(lang.code));
-      langList.appendChild(li);
-    });
-
-  if (!langList.children.length) {
-    langList.innerHTML = '<li style="justify-content:center;color:#94A3B8">لا نتائج</li>';
-  }
-}
-
-/* ============ 6. اختيار اللغة ============ */
-function selectLanguage(code) {
-  const lang = LANGUAGES.find(l => l.code === code);
-  if (!lang) return;
-
-  currentLang = code;
-  currentLangLabel.textContent = lang.native;
-  document.documentElement.lang = code;
-  document.documentElement.dir = lang.dir;
-  document.body.dir = lang.dir;
-
-  // ترجمة الواجهة (إن وُجدت الترجمة)
-  const t = TRANSLATIONS[code] || TRANSLATIONS.en;
-  applyTranslations(t);
-
-  // حفظ التفضيل
-  localStorage.setItem('lingua_lang', code);
-
-  // إغلاق القائمة
-  closeDropdown();
-  renderLanguages(langSearch.value);
-}
-
-/* ============ 7. تطبيق الترجمات ============ */
-function applyTranslations(t) {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    if (t[key]) el.textContent = t[key];
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.dataset.i18nPlaceholder;
-    if (t[key]) el.placeholder = t[key];
-  });
-  if (langSearch) langSearch.placeholder = t.langPlaceholder || 'Search...';
-}
-
-/* ============ 8. فتح/إغلاق القائمة ============ */
-function openDropdown() {
-  langDropdown.classList.add('open');
-  langBtn.classList.add('open');
-  langBtn.setAttribute('aria-expanded', 'true');
-  langSearch.value = '';
-  renderLanguages();
-  setTimeout(() => langSearch.focus(), 50);
-}
-function closeDropdown() {
-  langDropdown.classList.remove('open');
-  langBtn.classList.remove('open');
-  langBtn.setAttribute('aria-expanded', 'false');
-}
-langBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  langDropdown.classList.contains('open') ? closeDropdown() : openDropdown();
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#langSwitcher')) closeDropdown();
-});
-langSearch.addEventListener('input', (e) => renderLanguages(e.target.value));
-
-/* ============ 9. التبويبات ============ */
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
-    document.getElementById('panel-' + tab.dataset.tab).classList.remove('hidden');
-  });
-});
-
-/* ============ 10. رفع الملفات ============ */
-dropzone.addEventListener('click', (e) => {
-  if (e.target.closest('label')) return;
-  fileInput.click();
-});
-fileInput.addEventListener('change', (e) => {
-  if (e.target.files[0]) handleFile(e.target.files[0]);
-});
-['dragenter', 'dragover'].forEach(ev =>
-  dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.add('drag'); })
-);
-['dragleave', 'drop'].forEach(ev =>
-  dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove('drag'); })
-);
-dropzone.addEventListener('drop', (e) => {
-  const f = e.dataTransfer.files[0];
-  if (f) handleFile(f);
-});
-
-function handleFile(file) {
-  selectedFile = file;
-  fileName.textContent = file.name;
-  fileSize.textContent = formatSize(file.size);
-  fileIcon.textContent = getFileIcon(file.type, file.name);
-  filePreview.classList.remove('hidden');
-  translateFileBtn.disabled = false;
-}
-
-function formatSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / 1024 / 1024).toFixed(2) + ' MB';
-}
-function getFileIcon(type, name) {
-  if (type.startsWith('image/')) return '🖼️';
-  if (type.startsWith('audio/')) return '🎵';
-  if (name.endsWith('.pdf')) return '📕';
-  if (name.endsWith('.docx')) return '📘';
-  return '📄';
-}
-
-removeFile.addEventListener('click', () => {
-  selectedFile = null;
-  fileInput.value = '';
-  filePreview.classList.add('hidden');
-  translateFileBtn.disabled = true;
-});
-
-/* ============ 11. محاكاة الترجمة ============ */
-function simulateTranslation(sourceLabel) {
-  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-  result.classList.add('hidden');
-  progressWrap.classList.remove('hidden');
-  progressFill.style.width = '0%';
-  document.getElementById('progressText').textContent = t.translating || 'Translating...';
-
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += Math.random() * 18 + 6;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(interval);
-      setTimeout(() => finishTranslation(sourceLabel, t), 400);
+// 3. تعبئة اللغات
+Object.keys(languages).forEach(code => {
+    if (code !== 'auto') {
+        sourceLang.add(new Option(languages[code], code));
+        targetLang.add(new Option(languages[code], code));
     }
-    progressFill.style.width = progress + '%';
-  }, 280);
+});
+sourceLang.value = 'ar'; targetLang.value = 'en';
+
+// 4. نظام الثيمات
+themeToggle.addEventListener('click', () => {
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+        document.body.removeAttribute('data-theme');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.setAttribute('data-theme', 'dark');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        localStorage.setItem('theme', 'dark');
+    }
+});
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.setAttribute('data-theme', 'dark');
+    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
 }
 
-function finishTranslation(sourceLabel, t) {
-  progressWrap.classList.add('hidden');
-  const lang = LANGUAGES.find(l => l.code === currentLang);
-  resultText.textContent =
-    `✅ [محاكاة ترجمة — ${lang?.native || currentLang}]\n\n` +
-    `📥 المصدر: ${sourceLabel}\n` +
-    `🌐 اللغة الهدف: ${lang?.native} (${lang?.en})\n` +
-    `📅 التاريخ: ${new Date().toLocaleString()}\n\n` +
-    `هذا نص تجريبي يوضح كيف ستظهر الترجمة الاحترافية هنا بعد ربط الخدمة الفعلية (DeepL / Google Translate API / OpenAI).`;
+document.querySelectorAll('.color-circle').forEach(circle => {
+    circle.addEventListener('click', () => {
+        const color = circle.getAttribute('data-color');
+        if (color === 'purple') document.body.removeAttribute('data-color');
+        else document.body.setAttribute('data-color', color);
+        localStorage.setItem('themeColor', color);
+    });
+});
+const savedColor = localStorage.getItem('themeColor');
+if (savedColor && savedColor !== 'purple') document.body.setAttribute('data-color', savedColor);
 
-  result.classList.remove('hidden');
-  result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  showToast(t.done || '✅ Done!');
+// 5. أدوات النص
+swapBtn.addEventListener('click', () => {
+    const temp = sourceLang.value;
+    sourceLang.value = targetLang.value;
+    targetLang.value = temp === 'auto' ? 'en' : temp;
+});
+sourceText.addEventListener('input', () => charCount.textContent = sourceText.value.length);
+clearBtn.addEventListener('click', () => {
+    sourceText.value = ''; targetText.value = ''; charCount.textContent = '0'; statusEl.textContent = '';
+});
+fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { sourceText.value = ev.target.result; charCount.textContent = sourceText.value.length; showToast('تم الاستيراد'); };
+    reader.readAsText(file);
+});
+copyBtn.addEventListener('click', () => {
+    if (!targetText.value) return;
+    navigator.clipboard.writeText(targetText.value).then(() => showToast('تم النسخ'));
+});
+
+// الترجمة الصوتية والاستماع
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SpeechRecognition) {
+    const rec = new SpeechRecognition();
+    rec.continuous = false;
+    voiceBtn.addEventListener('click', () => {
+        if (voiceBtn.classList.contains('recording')) { rec.stop(); return; }
+        rec.lang = sourceLang.value === 'auto' ? 'ar-SA' : sourceLang.value;
+        rec.start();
+        voiceBtn.classList.add('recording');
+        voiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
+        statusEl.textContent = 'جاري الاستماع...';
+    });
+    rec.onresult = e => { sourceText.value += e.results[0][0].transcript + ' '; charCount.textContent = sourceText.value.length; };
+    rec.onend = () => { voiceBtn.classList.remove('recording'); voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>'; statusEl.textContent = ''; };
+} else voiceBtn.style.display = 'none';
+
+function speak(text, lang) {
+    if (!text) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    window.speechSynthesis.speak(u);
+}
+speakSource.addEventListener('click', () => speak(sourceText.value, sourceLang.value === 'auto' ? 'ar' : sourceLang.value));
+speakTarget.addEventListener('click', () => speak(targetText.value, targetLang.value));
+
+// 6. إعدادات API
+if (localStorage.getItem('apiEndpoint')) apiEndpoint.value = localStorage.getItem('apiEndpoint');
+if (localStorage.getItem('apiKey')) apiKey.value = localStorage.getItem('apiKey');
+if (localStorage.getItem('selectedModel')) currentModelName.textContent = localStorage.getItem('selectedModel');
+
+apiEndpoint.addEventListener('change', () => localStorage.setItem('apiEndpoint', apiEndpoint.value.trim()));
+apiKey.addEventListener('change', () => localStorage.setItem('apiKey', apiKey.value.trim()));
+
+pasteKeyBtn.addEventListener('click', async () => {
+    try {
+        if (!navigator.clipboard) throw new Error('غير مدعوم');
+        const text = await navigator.clipboard.readText();
+        apiKey.value = text;
+        localStorage.setItem('apiKey', text);
+        showToast('تم اللصق بنجاح');
+    } catch (err) {
+        showToast('المتصفح يمنع اللصق التلقائي. يرجى اللصق يدوياً.');
+        apiKey.focus();
+    }
+});
+
+// 7. اختبار الاتصال
+testConnectionBtn.addEventListener('click', async () => {
+    let ep = apiEndpoint.value.trim();
+    const key = apiKey.value.trim();
+    if (!ep || !key) { showToast('أدخل الرابط والمفتاح أولاً'); return; }
+    
+    ep = ep.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, '');
+    testConnectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الاختبار...';
+    testConnectionBtn.disabled = true;
+    
+    try {
+        const res = await fetch(`${ep}/models`, { headers: { 'Authorization': `Bearer ${key}` } });
+        if (res.ok) {
+            showToast('✅ الاتصال ناجح!');
+            apiEndpoint.value = ep;
+            localStorage.setItem('apiEndpoint', ep);
+        } else {
+            const err = await res.json();
+            showToast(`❌ فشل: ${err.error?.message || 'تأكد من المفتاح'}`);
+        }
+    } catch (e) {
+        showToast('❌ خطأ في الشبكة أو الرابط غير صحيح.');
+    } finally {
+        testConnectionBtn.innerHTML = '<i class="fas fa-wifi"></i> اختبار الاتصال';
+        testConnectionBtn.disabled = false;
+    }
+});
+
+// 8. جلب النماذج ديناميكياً
+modelsBtn.addEventListener('click', () => { modelsModal.classList.add('show'); loadModels(); });
+refreshModelsBtn.addEventListener('click', loadModels);
+
+async function loadModels() {
+    let ep = apiEndpoint.value.trim();
+    const key = apiKey.value.trim();
+    if (!ep || !key) { modelsList.innerHTML = '<p class="empty-msg">أدخل إعدادات API أولاً.</p>'; return; }
+
+    ep = ep.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, '');
+    modelsList.innerHTML = '<p class="empty-msg"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</p>';
+
+    try {
+        const res = await fetch(`${ep}/models`, { headers: { 'Authorization': `Bearer ${key}` } });
+        if (!res.ok) throw new Error('فشل');
+        
+        const data = await res.json();
+        const models = data.data || data;
+        if (!models || models.length === 0) {
+            modelsList.innerHTML = '<p class="empty-msg">لا توجد نماذج متاحة.</p>';
+            return;
+        }
+
+        modelsList.innerHTML = '';
+        const current = localStorage.getItem('selectedModel') || '';
+
+        models.forEach(m => {
+            const id = m.id || m.name;
+            const div = document.createElement('div');
+            div.className = `model-item ${id === current ? 'selected' : ''}`;
+            div.innerHTML = `<span>${id}</span><i class="fas fa-check m-check"></i>`;
+            div.onclick = () => {
+                localStorage.setItem('selectedModel', id);
+                currentModelName.textContent = id;
+                showToast(`تم اختيار: ${id}`);
+                modelsModal.classList.remove('show');
+            };
+            modelsList.appendChild(div);
+        });
+    } catch (e) {
+        modelsList.innerHTML = '<p class="empty-msg">فشل جلب النماذج. تأكد من الرابط والمفتاح.</p>';
+    }
 }
 
-/* ============ 12. أزرار الترجمة ============ */
-translateTextBtn.addEventListener('click', () => {
-  const text = sourceText.value.trim();
-  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-  if (!text) { showToast(t.empty || '⚠️ Empty'); return; }
-  simulateTranslation(`نص (${text.length} حرف)`);
+// 9. دالة الترجمة
+async function doTranslate() {
+    const text = sourceText.value.trim();
+    if (!text) { showToast('اكتب نصاً أولاً'); return; }
+
+    let from = sourceLang.value, to = targetLang.value;
+    if (from === to) { showToast('اللغتان متطابقتان'); return; }
+    if (from === 'auto') from = 'ar';
+
+    const isAI = aiToggle.checked;
+    statusEl.textContent = 'جاري الترجمة...'; statusEl.className = 'status';
+    translateBtn.disabled = true;
+    translateBtn.innerHTML = isAI ? '<i class="fas fa-brain fa-spin"></i> جاري التفكير...' : '<i class="fas fa-spinner fa-spin"></i> جاري الترجمة...';
+
+    try {
+        let translatedText = "";
+
+        if (isAI) {
+            let ep = apiEndpoint.value.trim();
+            const key = apiKey.value.trim();
+            const model = localStorage.getItem('selectedModel');
+
+            if (!ep || !key) throw new Error('يرجى إعداد API من الإعدادات');
+            if (!model) throw new Error('يرجى اختيار نموذج من زر النماذج');
+
+            ep = ep.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, '');
+            const fullUrl = `${ep}/chat/completions`;
+
+            const res = await fetch(fullUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                },
+                body: JSON.stringify({
+                    model: model,
+                    messages: [
+                        { role: "system", content: `You are a professional translator. Translate the following text from ${from} to ${to}. Return only the translated text, nothing else.` },
+                        { role: "user", content: text }
+                    ],
+                    temperature: 0.3
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error?.message || 'فشل الاتصال بالـ API');
+            
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+                translatedText = data.choices[0].message.content;
+            } else {
+                throw new Error('تنسيق رد غير متوقع');
+            }
+
+        } else {
+            const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`);
+            const data = await res.json();
+            if (data.responseData && data.responseData.translatedText) {
+                translatedText = data.responseData.translatedText;
+            } else throw new Error('فشل الاتصال بمترجم MyMemory');
+        }
+
+        targetText.value = translatedText.trim();
+        statusEl.textContent = 'تمت الترجمة بنجاح';
+        statusEl.classList.add('success');
+        saveToHistory(text, translatedText.trim(), from, to);
+
+    } catch (error) {
+        console.error(error);
+        statusEl.textContent = 'حدث خطأ';
+        statusEl.classList.add('error');
+        showToast('خطأ: ' + error.message);
+    } finally {
+        translateBtn.disabled = false;
+        translateBtn.innerHTML = '<i class="fas fa-language"></i> ترجم الآن';
+    }
+}
+translateBtn.addEventListener('click', doTranslate);
+
+// 10. السجل والنوافذ
+function saveToHistory(src, tgt, from, to) {
+    let hist = JSON.parse(localStorage.getItem('translationHistory')) || [];
+    hist.unshift({ src, tgt, from, to });
+    if (hist.length > 20) hist.pop();
+    localStorage.setItem('translationHistory', JSON.stringify(hist));
+    renderHistory();
+}
+
+function renderHistory() {
+    const hist = JSON.parse(localStorage.getItem('translationHistory')) || [];
+    if (!hist.length) { historyList.innerHTML = '<p class="empty-msg">لا توجد ترجمات.</p>'; return; }
+    historyList.innerHTML = hist.map((item, i) => `
+        <div class="history-item" onclick="window.loadHistory(${i})">
+            <div class="h-langs">${languages[item.from] || item.from} ➔ ${languages[item.to] || item.to}</div>
+            <div>${item.src}</div>
+            <div class="h-target">${item.tgt}</div>
+        </div>
+    `).join('');
+}
+
+window.loadHistory = (i) => {
+    const hist = JSON.parse(localStorage.getItem('translationHistory')) || [];
+    if (hist[i]) {
+        sourceText.value = hist[i].src;
+        targetText.value = hist[i].tgt;
+        charCount.textContent = hist[i].src.length;
+        historyModal.classList.remove('show');
+    }
+};
+
+clearHistoryBtn.addEventListener('click', () => { localStorage.removeItem('translationHistory'); renderHistory(); });
+historyBtn.addEventListener('click', () => { renderHistory(); historyModal.classList.add('show'); });
+settingsBtn.addEventListener('click', () => settingsModal.classList.add('show'));
+
+closeBtns.forEach(b => b.addEventListener('click', () => {
+    historyModal.classList.remove('show');
+    settingsModal.classList.remove('show');
+    modelsModal.classList.remove('show');
+}));
+window.addEventListener('click', e => {
+    if (e.target.classList.contains('modal')) e.target.classList.remove('show');
 });
 
-translateFileBtn.addEventListener('click', () => {
-  if (!selectedFile) return;
-  simulateTranslation(selectedFile.name);
-});
-
-/* ============ 13. نسخ وتنزيل ============ */
-copyBtn.addEventListener('click', async () => {
-  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-  try {
-    await navigator.clipboard.writeText(resultText.textContent);
-    showToast(t.copied || '✅ Copied!');
-  } catch {
-    showToast('⚠️ Copy failed');
-  }
-});
-
-downloadBtn.addEventListener('click', () => {
-  const blob = new Blob([resultText.textContent], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `translation-${Date.now()}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-/* ============ 14. Toast ============ */
+// 11. الإشعارات
 let toastTimer;
 function showToast(msg) {
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
 }
-
-/* ============ 15. التهيئة ============ */
-(function init() {
-  const saved = localStorage.getItem('lingua_lang') || 'ar';
-  renderLanguages();
-  selectLanguage(saved);
-})();
